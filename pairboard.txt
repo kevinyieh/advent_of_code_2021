@@ -1,0 +1,145 @@
+import heapq
+
+def concurrentEvents(arr):
+    arr.sort(key = lambda x: x[0])
+    heap, ans = [], 0
+    for intv in arr:
+        start, end = intv
+        if heap:
+            if start <= heap[0]:
+                heapq.heappush(heap, end)
+            else:
+                while heap and start > heap[0]:
+                    heapq.heappop(heap)
+                heapq.heappush(heap, end)
+
+        ans = max(len(heap), ans)
+    return ans
+
+def robHouse(root):
+    def helper(root):
+        if not root: return [0,0]
+
+        left = robHouse(root.left)
+        right = robHouse(root.right)
+        # res[0] is when robbed, res[1] is when not robbed
+        return [root.val + left[1] + right[1], left[0] + right[0]]
+
+    return max(helper(root))
+
+
+
+
+
+def search(arr):
+    if not arr: return None
+    l, r = 0, len(arr)-1
+    while l <= r:
+        m = (r+1)//2
+        if arr[m] < arr[m-1]:
+            return m
+        elif arr[m] > arr[l]:
+            l = m + 1
+        elif arr[m] < arr[r]:
+            r = m - 1
+        else:
+            left = search(arr[:m])
+            right = search(arr[m:])
+            if left is not None:
+                return left
+            elif right is not None:
+                return m + right
+
+
+
+
+def sliding_window_maximum(A, k):
+    queue = []
+    res = []
+    for i in range(k):
+        if not queue or A[i] < queue[0]:
+            queue.append(A[i])
+        else:
+            while A[i] >= queue[-1]:
+                queue.pop()
+            queue.append(A[i])
+    res.append(queue[0])
+
+    for i in range(k, len(A)):
+        if A[i] < queue[-1]:
+            queue.append(A[i])
+        else:
+            while queue and A[i] >= queue[-1]:
+                queue.pop()
+            queue.append(A[i])
+        
+        res.append(queue[0])
+    return res
+
+from collections import Counter
+def func(str, arr):
+    length = len(arr[0])
+    need = Counter(arr)
+    count = len(arr)
+    ans  = []
+    
+    while start + length <= len(str):
+        if str[start: start + length] not in need:
+            start += 1
+            continue
+        nxt = start
+
+        while nxt+length <= len(str) and count:
+            cur = str[nxt:nxt+length]
+            if cur in need and need[cur] > 0:
+                need[cur] -= 1
+                count -= 1
+            else:
+                break
+            next += length
+        if count == 0:
+            ans.append(start)
+        count = len(arr)
+        need = Counter(arr)
+    
+    return ans
+
+
+
+
+
+
+
+
+def dfs(key, product, target, dict, res, i):
+    if key in visited:
+        return 
+    if key not in dict:
+        return
+    if target in dict[key]:
+        res[i] = (product * dict[key])
+        return
+    for child in dict[key]:
+        dfs(child, product * dict[key], target, dict, res, i)
+
+    return
+
+
+
+def calc_equation(arr1, answers, arr2):
+    dict = defaultdict(hash)
+    res = [-1.0] * len(arr2)
+    for i in range(len(arr1)):
+        first ,second = arr1[i]
+        dict[first][second] = answers[i]
+        dict[second][first] = 1/answers[i]
+
+    for i in range(len(arr2)):
+        first, second = arr2[i]
+        dfs(first, 1.0, second, dict, res, i)
+    
+    return res
+
+        
+
+
